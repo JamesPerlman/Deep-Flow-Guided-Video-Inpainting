@@ -1,7 +1,10 @@
-FROM nvidia/cuda:10.0-cudnn8-devel-ubuntu18.04
+FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04
 
 # Environment variables
 ENV WORKDIR=/home/dfgvi
+
+# ignore interactive mode, just install everything
+ENV DEBIAN_FRONTEND noninteractive
 
 # Install apt dependencies
 
@@ -14,7 +17,12 @@ RUN apt update -y && \
     libxext6 \
     libxrender-dev \
     git \
-    ffmpeg
+    ffmpeg \
+    wget
+
+# Create aliases for python and pip
+RUN echo "alias pip=pip3" >> ~/.bashrc && \
+    echo "alias python=python3" >> ~/.bashrc
 
 # Fetch github repo
 
@@ -30,11 +38,12 @@ RUN pip3 install \
         cffi==1.12.3 \
         chardet==3.0.4 \
         cvbase==0.5.5 \
+        cupy==9.6.0 \
         Cython==0.29.12 \
         idna==2.8 \
         mkl-fft \
         mkl-random \
-        numpy==1.16.4 \
+        numpy==1.19.5 \
         olefile==0.46 \
         opencv-python==4.1.0.25 \
         Pillow==6.2.0 \
@@ -58,3 +67,5 @@ RUN pip3 install mmcv==0.2.10
 RUN pip3 install gdown
 
 RUN gdown https://drive.google.com/drive/folders/1Nh6eJsue2IkP_bsN02SRPvWzkIi6cNbE --folder
+
+RUN wget http://content.sniklaus.com/github/pytorch-liteflownet/network-sintel.pytorch -O pretrained_models/sintel.pth
