@@ -118,17 +118,17 @@ def generate_flow_list(frame_dir):
     for i in range(img_num):
         if i + 1 < img_num:
             flow_list.write(os.path.join(video_root, img_id_list[i]))
-            flow_list.write(' ')
+            flow_list.write('|')
             flow_list.write(os.path.join(video_root, img_id_list[i + 1]))
-            flow_list.write(' ')
+            flow_list.write('|')
             flow_list.write(os.path.join(output_root, img_id_list[i][:-4] + '.flo'))
             flow_list.write('\n')
 
         if i - 1 >= 0:
             flow_list.write(os.path.join(video_root, img_id_list[i]))
-            flow_list.write(' ')
+            flow_list.write('|')
             flow_list.write(os.path.join(video_root, img_id_list[i - 1]))
-            flow_list.write(' ')
+            flow_list.write('|')
             flow_list.write(os.path.join(output_root, img_id_list[i][:-4] + '.rflo'))
             flow_list.write('\n')
 

@@ -15,7 +15,7 @@ def get_fps(video_path: Path) -> str:
             -of csv=p=0 \
             -select_streams v:0 \
             -show_entries stream=r_frame_rate \
-        \"{video_path}\" \
+            \"{video_path}\" \
     ")
 
 def get_dimensions(video_path) -> (int, int):
@@ -25,7 +25,7 @@ def get_dimensions(video_path) -> (int, int):
             -select_streams v \
             -show_entries stream=width,height \
             -of csv=p=0:s=, \
-            {video_path} \
+            \"{video_path}\" \
     ")
 
     dims = dims_str.split(",", maxsplit=1)
@@ -39,7 +39,7 @@ def get_frame_count(video_path: Path) -> int:
             -count_frames \
             -show_entries stream=nb_read_frames \
             -print_format default=nokey=1:noprint_wrappers=1 \
-            {video_path} \
+            \"{video_path}\" \
         ")
     return int(frames_str)
 
@@ -71,7 +71,8 @@ def extract_frames(
                 mpdecimate, \
                 setpts=N/FRAME_RATE/TB \
             \" \
-            \"{output_frames_path}/%06d.{img_format}\" \
+            -start_number 0 \
+            \"{output_frames_path}/%05d.{img_format}\" \
     ")
 
 
@@ -86,7 +87,7 @@ def combine_frames(
         playlist_path.unlink()
     print(input_frames_path)
     playlist_str = "\n".join(
-        [f"file '{safe_str(img_path)}'" for img_path in input_frames_path.iterdir()])
+        [f"file '{safe_str(img_path.name)}'" for img_path in input_frames_path.iterdir()])
 
     print(playlist_str)
     with open(playlist_path, "w") as f:

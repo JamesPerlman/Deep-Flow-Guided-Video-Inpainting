@@ -20,7 +20,7 @@ class FlowInfer(torch.utils.data.Dataset):
             line = line.strip(' ')
             line = line.strip('\n')
 
-            line_split = line.split(' ')
+            line_split = line.split('|')
             self.frame1_list.append(line_split[0])
             self.frame2_list.append(line_split[1])
             self.output_list.append(line_split[2])

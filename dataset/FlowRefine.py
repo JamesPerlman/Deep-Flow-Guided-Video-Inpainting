@@ -23,7 +23,7 @@ class FlowSeq(data.Dataset):
             for line in f:
                 line = line.strip()
                 line = line.strip(' ')
-                line_split = line.split(' ')
+                line_split = line.split('|')
 
                 flow_dir = line_split[0:22]
                 if self.config.DATA_ROOT is not None:
