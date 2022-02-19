@@ -13,12 +13,10 @@ if [ -z "${INPUT_PATH}" ]; then
     exit 1
 fi
 
-WORKDIR=/home/dfgvi 
-
 docker run \
     -it \
     --rm \
     --gpus=all \
     --shm-size 8G \
-    -v "${INPUT_PATH}":"${WORKDIR}/content" \
+    -v "${INPUT_PATH}":"/home/content" \
     dfgvi
