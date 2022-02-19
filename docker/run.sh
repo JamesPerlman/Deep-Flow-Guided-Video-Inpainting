@@ -14,11 +14,11 @@ if [ -z "${INPUT_PATH}" ]; then
 fi
 
 WORKDIR=/home/dfgvi 
-#    -v "${INPUT_PATH}":"${WORKDIR}/content" \
+
 docker run \
     -it \
     --rm \
     --gpus=all \
-    -v /home/james/developer/Deep-Flow-Guided-Video-Inpainting:/home/dfgvi2 \
-    -v "${INPUT_PATH}":"${WORKDIR}2/content" \
+    --shm-size 8G \
+    -v "${INPUT_PATH}":"${WORKDIR}/content" \
     dfgvi
