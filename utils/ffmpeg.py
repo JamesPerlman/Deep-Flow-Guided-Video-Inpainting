@@ -96,9 +96,10 @@ def combine_frames(
     os.system(f"\
         ffmpeg \
             -f concat \
-            -i {playlist_path} \
             -r {fps} \
+            -i \"{playlist_path}\" \
             -c:v libx264 \
             -pix_fmt yuv420p \
-            {output_video_path} \
+            -vf fps={fps} \
+            \"{output_video_path}\" \
         ")
