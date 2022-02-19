@@ -29,6 +29,7 @@ height: int
 
 is_input_video = False
 is_output_video = False
+is_mask_video = False
 
 # clean up data root
 cleanup(data_root_path)
@@ -36,7 +37,7 @@ cleanup(data_root_path)
 # extract frames for input_path if necessary, also get input width and height
 if input_path.is_file():
     width, height = ffmpeg.get_dimensions(input_path)
-    input_frames_path = input_path.parent / f"{input_path.stem}-frames"
+    input_frames_path = data_root_path / f"{input_path.stem}-frames"
     ffmpeg.extract_frames(input_path, input_frames_path)
     is_input_video = True
 else:
@@ -46,15 +47,15 @@ else:
 
 # extract frames for mask_path if necessary
 if mask_path.is_file():
-    mask_frames_path = mask_path.parent / f"{mask_path.stem}-frames"
+    mask_frames_path = data_root_path / f"{input_path.stem}-mask-frames"
     ffmpeg.extract_frames(mask_path, mask_frames_path)
+    is_mask_video = True
 else:
     mask_frames_path = mask_path
 
 # determine output_path
-file_regex = re.compile("^[\w,\s-]+\.[A-Za-z]{3}$")
-if file_regex.match(output_path.name) != None:
-    output_frames_path = output_path.parent / f"{output_path.stem}-frames"
+if output_path.suffix != '':
+    output_frames_path = data_root_path / f"{output_path.stem}-frames"
     is_output_video = True
 else:
     output_name = input_path.stem
@@ -63,8 +64,8 @@ else:
 # run video inpaint
 os.system(f"\
     python3 tools/video_inpaint.py \
-        --frame_dir {input_frames_path} \
-        --MASK_ROOT {mask_frames_path} \
+        --frame_dir \"{input_frames_path}\" \
+        --MASK_ROOT \"{mask_frames_path}\" \
         --img_shape 0 0 \
         --img_size {height} {width} \
         --LiteFlowNet \
@@ -74,12 +75,13 @@ os.system(f"\
 ")
 
 # collect output and combine frames
-inpaint_res_path = data_root_path / "Inpaint_Res"
+inpaint_res_path = data_root_path / "Inpaint_Res" / "inpaint_res"
 
 if output_frames_path.exists():
-    shutil.rmtree(output_frames_path)
+   shutil.rmtree(output_frames_path)
 
-os.rename(str(inpaint_res_path), output_frames_path)
+if inpaint_res_path.exists():
+    shutil.copytree(str(inpaint_res_path), str(output_frames_path))
 
 if is_output_video:
     if not output_frames_path.exists():
@@ -90,5 +92,10 @@ if is_output_video:
 # cleanup
 if is_input_video:
     shutil.rmtree(input_frames_path, ignore_errors=True)
+
+if is_mask_video:
+    shutil.rmtree(mask_frames_path, ignore_errors=True)
+
+shutil.rmtree(data_root_path / "Inpaint_Res", ignore_errors=True)
 
 cleanup(data_root_path)
